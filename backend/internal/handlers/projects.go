@@ -8,6 +8,7 @@ import (
 	"github.com/ntpotraz/resume-orchestrator/internal/models"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
+	"github.com/clerk/clerk-sdk-go/v2"
 )
 
 type Handler struct {
@@ -15,9 +16,17 @@ type Handler struct {
 }
 
 func (h *Handler) ListProjects(w http.ResponseWriter, r *http.Request) {
-	collection := h.DB.Collection("projects")
+	ctx := r.Context()
+	claims, ok := clerk.SessionClaimsFromContext(ctx)
+	if !ok {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
 
-	cursor, err := collection.Find(context.Background(), bson.M{})
+	collection := h.DB.Collection("projects")
+	filter := bson.M{"user_id": claims.Subject}
+
+	cursor, err := collection.Find(ctx, filter)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

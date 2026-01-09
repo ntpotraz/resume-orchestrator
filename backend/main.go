@@ -6,10 +6,11 @@ import (
 	"os"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
+	chimw "github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"github.com/ntpotraz/resume-orchestrator/internal/database"
 	"github.com/ntpotraz/resume-orchestrator/internal/handlers"
+	clerkmw "github.com/ntpotraz/resume-orchestrator/internal/middleware"
 )
 
 func main() {
@@ -35,8 +36,8 @@ func main() {
 		DB: db,
 	}
 
-	router.Use(middleware.Logger)
-	router.Use(middleware.Recoverer)
+	router.Use(chimw.Logger)
+	router.Use(chimw.Recoverer)
 	router.Use(cors.Handler(cors.Options{
 		AllowedOrigins: []string{"http://localhost:3000", "http://localhost:5173"},
 		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
@@ -50,10 +51,19 @@ func main() {
 		w.Write([]byte(`{"status": "available", "environment": "dev"}`))
 	})
 	router.Route("/api/v1", func(r chi.Router) {
-		r.Get("/projects", h.ListProjects)
-		r.Post("/projects", h.AddProject)
+		r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+			w.Header().Set("Content-Type", "application/json")
+			w.Write([]byte(`{"status": "available", "environment": "dev"}`))
+		})
 
-		r.Get("/summary", handlers.GetSummary)
+		r.Group(func(r chi.Router) {
+			r.Use(clerkmw.Authenticate)
+			r.Get("/projects", h.ListProjects)
+			r.Post("/projects", h.AddProject)
+
+			r.Get("/summary", handlers.GetSummary)
+		})
 	})
 
 	log.Println("...Starting resume-orchestrator server...")
