@@ -5,10 +5,10 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/clerk/clerk-sdk-go/v2"
 	"github.com/ntpotraz/resume-orchestrator/internal/models"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
-	"github.com/clerk/clerk-sdk-go/v2"
 )
 
 type Handler struct {
@@ -44,21 +44,34 @@ func (h *Handler) ListProjects(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) AddProject(w http.ResponseWriter, r *http.Request) {
-	var project models.Project
+	var input struct {
+		Title       string   `json:"title"`
+		URL         string   `json:"url"`
+		DateRange   string   `json:"date_range"`
+		Description []string `json:"description"`
+		Tags        []string `json:"tags"`
+	}
 
 	claims, ok := clerk.SessionClaimsFromContext(r.Context())
 	if !ok {
 		http.Error(w, "Unauthorized project creation", http.StatusUnauthorized)
 	}
 
-	if err := json.NewDecoder(r.Body).Decode(&project); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
 
-	project.UserID = claims.Subject
-	project.IsSelected = true
-	project.Order = 0
+	project := models.Project{
+		UserID:      claims.Subject,
+		Title:       input.Title,
+		URL:         input.URL,
+		DateRange:   input.DateRange,
+		Description: input.Description,
+		Tags:        input.Tags,
+		IsSelected:  true,
+		Order:       0,
+	}
 
 	collection := h.DB.Collection("projects")
 	result, err := collection.InsertOne(r.Context(), project)
