@@ -15,9 +15,10 @@ const ProjectsForm = ({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const formElement = e.currentTarget;
     setIsSubmitting(true);
 
-    const formData = new FormData(e.currentTarget);
+    const formData = new FormData(formElement);
 
     const payload = {
       title: formData.get("title"),
@@ -44,7 +45,7 @@ const ProjectsForm = ({
       });
 
       if (res.ok) {
-        e.currentTarget.reset();
+        formElement.reset();
         onProjectCreated();
       }
     } catch (err) {

@@ -46,11 +46,20 @@ func (h *Handler) ListProjects(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) AddProject(w http.ResponseWriter, r *http.Request) {
 	var project models.Project
 
+	claims, ok := clerk.SessionClaimsFromContext(r.Context())
+	if !ok {
+		http.Error(w, "Unauthorized project creation", http.StatusUnauthorized)
+	}
+
 	if err := json.NewDecoder(r.Body).Decode(&project); err != nil {
 		http.Error(w, "Invalid request payload", http.StatusBadRequest)
 		return
 	}
-	
+
+	project.UserID = claims.Subject
+	project.IsSelected = true
+	project.Order = 0
+
 	collection := h.DB.Collection("projects")
 	result, err := collection.InsertOne(r.Context(), project)
 	if err != nil {
