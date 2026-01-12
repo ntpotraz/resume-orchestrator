@@ -61,6 +61,7 @@ func main() {
 			r.Use(clerkmw.Authenticate)
 			r.Get("/projects", h.ListProjects)
 			r.Post("/projects", h.AddProject)
+			r.Delete("/projects/{id}", h.DeleteProject)
 
 			r.Get("/summary", handlers.GetSummary)
 		})

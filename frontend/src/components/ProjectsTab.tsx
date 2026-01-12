@@ -2,10 +2,11 @@ import { useState } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import ProjectsList from "./ProjectsList";
 import ProjectsForm from "./ProjectsForm";
+import type { Project } from "../types/project";
 
 const ProjectsTab = () => {
-	const [creatingProject, setCreatingNewProject] = useState(true);
-	const [projects, setProjects] = useState([]);
+	const [creatingProject, setCreatingNewProject] = useState(false);
+	const [projects, setProjects] = useState<Project[]>([]);
 	const { getToken } = useAuth();
 
 	const fetchProjects = async () => {

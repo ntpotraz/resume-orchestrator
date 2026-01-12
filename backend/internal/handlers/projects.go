@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/clerk/clerk-sdk-go/v2"
+	"github.com/go-chi/chi/v5"
 	"github.com/ntpotraz/resume-orchestrator/internal/models"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
@@ -55,6 +56,7 @@ func (h *Handler) AddProject(w http.ResponseWriter, r *http.Request) {
 	claims, ok := clerk.SessionClaimsFromContext(r.Context())
 	if !ok {
 		http.Error(w, "Unauthorized project creation", http.StatusUnauthorized)
+		return
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
@@ -83,4 +85,39 @@ func (h *Handler) AddProject(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(result)
+}
+
+func (h *Handler) DeleteProject(w http.ResponseWriter, r *http.Request) {
+	idStr := chi.URLParam(r, "id")
+
+	oid, err := bson.ObjectIDFromHex(idStr)
+	if err != nil {
+		http.Error(w, "Invalid project ID format", http.StatusBadRequest)
+		return
+	}
+
+	ctx := r.Context()
+	claims, ok := clerk.SessionClaimsFromContext(ctx)
+	if !ok {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	collection := h.DB.Collection("projects")
+	filter := bson.M{
+		"_id": oid,
+		"user_id": claims.Subject,
+	}
+
+	result, err := collection.DeleteOne(ctx, filter)
+	if err != nil {
+		http.Error(w, "Failed to delete project: "+err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if result.DeletedCount == 0 {
+		http.Error(w, "Project not found", http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
