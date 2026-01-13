@@ -2,14 +2,11 @@ import { useAuth } from "@clerk/clerk-react";
 import { useState } from "react";
 
 type ProjectsFormProps = {
-  closeProject: () => void;
-  onProjectCreated: () => void;
+  onProjectCreated: () => Promise<void>;
+  onClose: () => void;
 };
 
-const ProjectsForm = ({
-  closeProject,
-  onProjectCreated,
-}: ProjectsFormProps) => {
+const ProjectsForm = ({ onProjectCreated, onClose }: ProjectsFormProps) => {
   const { getToken } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -56,23 +53,24 @@ const ProjectsForm = ({
   };
 
   return (
-    <div>
+    <div className="bg-blue-600">
       <div className="flex mb-4 items-center justify-between">
         <h2 className="text-xl">Your Projects</h2>
-        <button
-          className="bg-blue-600 px-4 py-2 rounded text-white"
-          type="button"
-          onClick={closeProject}
-        >
-          Cancel
-        </button>
       </div>
       <form
         onSubmit={handleSubmit}
         className="space-y-4 max-w-lg border p-6 rounded-lg bg-white shadow"
       >
-        <h3 className="text-lg font-semibold">Add New Project</h3>
-
+        <div className="flex justify-between">
+          <h3 className="text-lg font-semibold">Add New Project</h3>
+          <button
+            className="bg-blue-600 px-4 py-2 rounded text-white"
+            type="button"
+            onClick={onClose}
+          >
+            Close
+          </button>
+        </div>
         <div>
           <label
             htmlFor="title"

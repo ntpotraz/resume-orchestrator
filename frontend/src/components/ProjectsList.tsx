@@ -4,14 +4,15 @@ import type { Project } from "../types/project";
 type ProjectsListProps = {
   projects: Project[];
   fetchProjects: () => void;
-  newProject: () => void;
+  openModal: () => void;
 };
 
 const ProjectsList = ({
   projects,
   fetchProjects,
-  newProject,
+  openModal,
 }: ProjectsListProps) => {
+  fetchProjects();
   return (
     <div>
       <div className="flex mb-4 gap-4 justify-between items-center">
@@ -26,7 +27,7 @@ const ProjectsList = ({
         <button
           className="bg-blue-600 px-4 py-2 rounded text-white"
           type="button"
-          onClick={newProject}
+          onClick={openModal}
         >
           Add Project
         </button>
