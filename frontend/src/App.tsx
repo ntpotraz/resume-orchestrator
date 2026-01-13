@@ -8,8 +8,8 @@ import ResumeOrchestrator from "./components/ResumeOrchestrator";
 
 export default function App() {
 	return (
-		<div className="flex flex-col w-full h-dvh p-8">
-			<header className="flex justify-between items-center mb-8">
+		<div className="flex flex-col w-full h-dvh p-8 overflow-hidden">
+			<header className="flex justify-between items-center mb-8 shrink-0">
 				<h1 className="text-2xl font-bold">Hello World</h1>
 				<SignedOut>
 					<SignInButton mode="modal" />
@@ -19,7 +19,7 @@ export default function App() {
 				</SignedIn>
 			</header>
 
-			<main className="flex flex-col flex-1">
+			<main className="flex flex-col flex-1 min-h-0">
 				<SignedIn>
 					<ResumeOrchestrator />
 				</SignedIn>

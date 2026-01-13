@@ -32,7 +32,7 @@ const ProjectTab = () => {
   }, [fetchProjects])
 
   return (
-    <div className="flex bg-red-700">
+    <div className="flex flex-col flex-1 min-h-0">
       <ProjectList
         projects={projects}
         openModal={() => setShowModal(true)}
