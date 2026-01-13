@@ -7,13 +7,13 @@ type ProjectsListProps = {
   openModal: () => void;
 };
 
-const ProjectsList = ({
+const ProjectList = ({
   projects,
   fetchProjects,
   openModal,
 }: ProjectsListProps) => {
   return (
-    <div>
+    <div className="flex flex-col">
       <div className="flex mb-4 gap-4 justify-between items-center">
         <h2 className="text-xl">Your Projects</h2>
         <button
@@ -24,7 +24,7 @@ const ProjectsList = ({
           Add Project
         </button>
       </div>
-      <div className="flex flex-col gap-2 bg-gray-300 rounded min-h-40 items-center p-2">
+      <div className="flex flex-col flex-1 h-30 gap-2  rounded items-center p-2 overflow-hidden">
         {projects ? (
           projects.map((project) => (
             <ProjectItem
@@ -39,4 +39,4 @@ const ProjectsList = ({
   );
 };
 
-export default ProjectsList;
+export default ProjectList;

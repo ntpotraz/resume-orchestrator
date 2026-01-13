@@ -1,11 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@clerk/clerk-react";
-import ProjectsList from "./ProjectsList";
-import ProjectsForm from "./ProjectsForm";
+import ProjectList from "./ProjectList";
+import ProjectsForm from "./ProjectForm";
 import type { Project } from "../types/project";
 import { createPortal } from "react-dom";
 
-const ProjectsTab = () => {
+const ProjectTab = () => {
   const [showModal, setShowModal] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const { getToken } = useAuth();
@@ -32,8 +32,8 @@ const ProjectsTab = () => {
   }, [fetchProjects])
 
   return (
-    <div>
-      <ProjectsList
+    <div className="flex bg-red-700">
+      <ProjectList
         projects={projects}
         openModal={() => setShowModal(true)}
         fetchProjects={fetchProjects}
@@ -51,4 +51,4 @@ const ProjectsTab = () => {
   );
 };
 
-export default ProjectsTab;
+export default ProjectTab;

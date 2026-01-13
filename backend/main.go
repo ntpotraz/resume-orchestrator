@@ -85,13 +85,14 @@ func main() {
 			w.Write([]byte(`{"status": "available", "environment": "dev"}`))
 		})
 
+		r.Get("/summary", handlers.GetSummary)
+
 		r.Group(func(r chi.Router) {
 			r.Use(clerkmw.Authenticate)
 			r.Get("/projects", h.ListProjects)
 			r.Post("/projects", h.AddProject)
 			r.Delete("/projects/{id}", h.DeleteProject)
 
-			r.Get("/summary", handlers.GetSummary)
 		})
 	})
 

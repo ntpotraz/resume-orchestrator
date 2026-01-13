@@ -4,11 +4,11 @@ import {
 	SignInButton,
 	UserButton,
 } from "@clerk/clerk-react";
-import ProjectsTab from "./components/ProjectsTab";
+import ResumeOrchestrator from "./components/ResumeOrchestrator";
 
 export default function App() {
 	return (
-		<div className="p-8">
+		<div className="flex flex-col w-full h-dvh p-8">
 			<header className="flex justify-between items-center mb-8">
 				<h1 className="text-2xl font-bold">Hello World</h1>
 				<SignedOut>
@@ -19,9 +19,9 @@ export default function App() {
 				</SignedIn>
 			</header>
 
-			<main>
+			<main className="flex flex-col flex-1">
 				<SignedIn>
-					<ProjectsTab />
+					<ResumeOrchestrator />
 				</SignedIn>
 				<SignedOut>
 					<p className="text-gray-500 text-center">
