@@ -19,29 +19,57 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
-	mongoURI := os.Getenv("MONGO_URI") 
+	mongoURI := os.Getenv("MONGO_URI")
 	if mongoURI == "" {
 		mongoURI = "mongodb://localhost:27017"
 	}
 
 	router := chi.NewRouter()
 	server := http.Server{
-		Addr: ":" + port,
+		Addr:    ":" + port,
 		Handler: router,
 	}
 
 	client := database.ConnectDB(mongoURI)
 	db := client.Database("resume-orchestrator")
-	h := &handlers.Handler{
-		DB: db,
+
+	tags := handlers.Tags{
+		Langs: map[string]string{
+			"go":           "Go",
+			"typescript":   "TypeScript",
+			"javascript":   "JavaScript",
+			"python":       "Python",
+			"react":        "React",
+			"html":         "HTML",
+			"css":          "CSS",
+			"java":         "Java",
+			"c++":          "C++",
+			"react native": "React Native",
+		},
+		Tools: map[string]string{
+			"sql":        "SQL",
+			"postgresql": "PostgreSQL",
+			"mysql":      "MySQL",
+			"linux":      "Linux",
+			"ci/cd":      "CI/CD",
+			"docker":     "docker",
+			"aws":        "AWS",
+			"gcp":        "GCP",
+			"git":        "Git",
+		},
+	}
+
+	h := &handlers.Config{
+		DB:   db,
+		Tags: tags,
 	}
 
 	router.Use(chimw.Logger)
 	router.Use(chimw.Recoverer)
 	router.Use(cors.Handler(cors.Options{
-		AllowedOrigins: []string{"http://localhost:3000", "http://localhost:5173"},
-		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders: []string{"Accept", "Authorization", "Content-Type"},
+		AllowedOrigins:   []string{"http://localhost:3000", "http://localhost:5173"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type"},
 		AllowCredentials: true,
 	}))
 

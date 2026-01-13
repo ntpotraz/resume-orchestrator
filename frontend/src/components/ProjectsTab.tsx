@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "@clerk/clerk-react";
 import ProjectsList from "./ProjectsList";
 import ProjectsForm from "./ProjectsForm";
@@ -10,7 +10,7 @@ const ProjectsTab = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const { getToken } = useAuth();
 
-  const fetchProjects = async () => {
+  const fetchProjects = useCallback(async () => {
     try {
       const token = await getToken();
 
@@ -25,7 +25,11 @@ const ProjectsTab = () => {
     } catch (err) {
       console.error("Fetch failed", err);
     }
-  };
+  }, [getToken]);
+
+  useEffect(() => {
+    fetchProjects()
+  }, [fetchProjects])
 
   return (
     <div>

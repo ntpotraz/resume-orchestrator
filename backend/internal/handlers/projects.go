@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"net/http"
+	"strings"
 
 	"github.com/clerk/clerk-sdk-go/v2"
 	"github.com/go-chi/chi/v5"
@@ -12,11 +13,17 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
-type Handler struct {
+type Config struct {
 	DB *mongo.Database
+	Tags Tags
 }
 
-func (h *Handler) ListProjects(w http.ResponseWriter, r *http.Request) {
+type Tags struct {
+	Langs map[string]string
+	Tools map[string]string
+}
+
+func (cfg *Config) ListProjects(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	claims, ok := clerk.SessionClaimsFromContext(ctx)
 	if !ok {
@@ -24,7 +31,7 @@ func (h *Handler) ListProjects(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	collection := h.DB.Collection("projects")
+	collection := cfg.DB.Collection("projects")
 	filter := bson.M{"user_id": claims.Subject}
 
 	cursor, err := collection.Find(ctx, filter)
@@ -44,7 +51,7 @@ func (h *Handler) ListProjects(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(projects)
 }
 
-func (h *Handler) AddProject(w http.ResponseWriter, r *http.Request) {
+func (cfg *Config) AddProject(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		Title       string   `json:"title"`
 		URL         string   `json:"url"`
@@ -64,18 +71,31 @@ func (h *Handler) AddProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	var sanitized []string
+	for _, raw := range input.Tags {
+		cleanTag := strings.ToLower(strings.TrimSpace(raw))
+
+		if canon, exists := cfg.Tags.Langs[cleanTag]; exists {
+			sanitized = append(sanitized, canon)
+		} else if canon, exists := cfg.Tags.Tools[cleanTag]; exists {
+			sanitized = append(sanitized, canon)
+		} else {
+			sanitized = append(sanitized, raw)
+		}
+	}
+
 	project := models.Project{
 		UserID:      claims.Subject,
 		Title:       input.Title,
 		URL:         input.URL,
 		DateRange:   input.DateRange,
 		Description: input.Description,
-		Tags:        input.Tags,
+		Tags:        sanitized,
 		IsSelected:  true,
 		Order:       0,
 	}
 
-	collection := h.DB.Collection("projects")
+	collection := cfg.DB.Collection("projects")
 	result, err := collection.InsertOne(r.Context(), project)
 	if err != nil {
 		http.Error(w, "Failed to create project: "+err.Error(), http.StatusInternalServerError)
@@ -87,7 +107,7 @@ func (h *Handler) AddProject(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(result)
 }
 
-func (h *Handler) DeleteProject(w http.ResponseWriter, r *http.Request) {
+func (cfg *Config) DeleteProject(w http.ResponseWriter, r *http.Request) {
 	idStr := chi.URLParam(r, "id")
 
 	oid, err := bson.ObjectIDFromHex(idStr)
@@ -103,9 +123,9 @@ func (h *Handler) DeleteProject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	collection := h.DB.Collection("projects")
+	collection := cfg.DB.Collection("projects")
 	filter := bson.M{
-		"_id": oid,
+		"_id":     oid,
 		"user_id": claims.Subject,
 	}
 

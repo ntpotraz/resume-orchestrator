@@ -12,27 +12,19 @@ const ProjectsList = ({
   fetchProjects,
   openModal,
 }: ProjectsListProps) => {
-  fetchProjects();
   return (
     <div>
       <div className="flex mb-4 gap-4 justify-between items-center">
         <h2 className="text-xl">Your Projects</h2>
         <button
-          type="button"
-          onClick={fetchProjects}
-          className="bg-blue-600 text-white px-4 py-2 rounded"
-        >
-          Refresh Projects
-        </button>
-        <button
-          className="bg-blue-600 px-4 py-2 rounded text-white"
+          className="bg-blue-600 px-4 py-2 rounded text-white hover:bg-blue-500 hover:shadow-gray-400 shadow-lg hover:scale-105 hover:transition-all duration-150 ease-out"
           type="button"
           onClick={openModal}
         >
           Add Project
         </button>
       </div>
-      <div className="flex flex-col bg-gray-300 rounded min-h-40">
+      <div className="flex flex-col gap-2 bg-gray-300 rounded min-h-40 items-center p-2">
         {projects ? (
           projects.map((project) => (
             <ProjectItem
