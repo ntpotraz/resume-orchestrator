@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"context"
 	"encoding/json"
 	"net/http"
 	"strings"
@@ -10,18 +9,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/ntpotraz/resume-orchestrator/internal/models"
 	"go.mongodb.org/mongo-driver/v2/bson"
-	"go.mongodb.org/mongo-driver/v2/mongo"
 )
-
-type Config struct {
-	DB *mongo.Database
-	Tags Tags
-}
-
-type Tags struct {
-	Langs map[string]string
-	Tools map[string]string
-}
 
 func (cfg *Config) ListProjects(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -39,10 +27,10 @@ func (cfg *Config) ListProjects(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	defer cursor.Close(context.Background())
+	defer cursor.Close(ctx)
 
 	var projects []models.Project
-	if err := cursor.All(context.Background(), &projects); err != nil {
+	if err := cursor.All(ctx, &projects); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}

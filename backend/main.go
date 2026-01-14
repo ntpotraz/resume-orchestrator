@@ -78,14 +78,14 @@ func main() {
 		w.Header().Set("Content-Type", "application/json")
 		w.Write([]byte(`{"status": "available", "environment": "dev"}`))
 	})
+
 	router.Route("/api/v1", func(r chi.Router) {
 		r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusOK)
 			w.Header().Set("Content-Type", "application/json")
 			w.Write([]byte(`{"status": "available", "environment": "dev"}`))
 		})
-
-		r.Get("/summary", handlers.GetSummary)
+	r.Get("/summaries", h.GetSummary)
 
 		r.Group(func(r chi.Router) {
 			r.Use(clerkmw.Authenticate)
