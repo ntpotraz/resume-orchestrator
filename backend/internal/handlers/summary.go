@@ -1,8 +1,7 @@
 package handlers
 
 import (
-	"fmt"
-	"log"
+	"encoding/json"
 	"net/http"
 
 	"github.com/clerk/clerk-sdk-go/v2"
@@ -19,8 +18,7 @@ func (cfg *Config) GetSummary(w http.ResponseWriter, r *http.Request) {
 	}
 
 	collection := cfg.DB.Collection("summaries")
-	// filter := bson.M{"user_id": claims.Subject}
-	filter := bson.M{}
+	filter := bson.M{"user_id": claims.Subject}
 
 	cursor, err := collection.Find(ctx, filter)
 	if err != nil {
@@ -36,9 +34,39 @@ func (cfg *Config) GetSummary(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	// json.NewEncoder(w).Encode(summaries)
+	json.NewEncoder(w).Encode(summaries)
+}
 
-	response := fmt.Sprintf(`{"user_id": "%v", "body": "Results-driven Full Stack Engineer with 4+ years of experience architecting full-stack solutions. Expertise in $(langs) backend development, and React/TypeScript frontend. Seeking a Full Stack Engineering role to build innovative solutions."}`, claims.Subject)
-	log.Printf("Json: %v", response)
-	w.Write([]byte(response))
+func (cfg *Config) AddSummary(w http.ResponseWriter, r *http.Request) {
+	var input struct {
+		Body string `json:"body"`
+	}
+
+	ctx := r.Context()
+	claims, ok := clerk.SessionClaimsFromContext(ctx)
+	if !ok {
+		http.Error(w, "Unauthorized to add summary", http.StatusUnauthorized)
+		return
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+		http.Error(w, "Could not decode payload", http.StatusBadRequest)
+		return
+	}
+
+	summary := models.Summary {
+		UserID: claims.Subject,
+		Body: input.Body,
+	}
+	
+	collection := cfg.DB.Collection("summaries")
+	result, err := collection.InsertOne(ctx, summary)
+	if err != nil {
+		http.Error(w, "Failed to post summary", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(result)
 }

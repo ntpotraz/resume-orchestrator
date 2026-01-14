@@ -13,7 +13,7 @@ export type Project = {
 };
 
 export type Summary = {
-  // id: string;
+  id: string;
   user_id: string;
   body: string;
 };

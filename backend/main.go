@@ -85,7 +85,6 @@ func main() {
 			w.Header().Set("Content-Type", "application/json")
 			w.Write([]byte(`{"status": "available", "environment": "dev"}`))
 		})
-	r.Get("/summaries", h.GetSummary)
 
 		r.Group(func(r chi.Router) {
 			r.Use(clerkmw.Authenticate)
@@ -93,6 +92,8 @@ func main() {
 			r.Post("/projects", h.AddProject)
 			r.Delete("/projects/{id}", h.DeleteProject)
 
+			r.Get("/summaries", h.GetSummary)
+			r.Post("/summaries", h.AddSummary)
 		})
 	})
 

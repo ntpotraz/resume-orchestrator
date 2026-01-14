@@ -1,4 +1,4 @@
-// import { useAuth } from "@clerk/clerk-react";
+import { useAuth } from "@clerk/clerk-react";
 import { useState, useEffect } from "react";
 
 type SummaryFormProps = {
@@ -6,9 +6,8 @@ type SummaryFormProps = {
   onClose: () => void;
 };
 
-// const SummaryForm = ({ onSummaryCreated, onClose }: SummaryFormProps) => {
-const SummaryForm = ({ onClose }: SummaryFormProps) => {
-  // const { getToken } = useAuth();
+const SummaryForm = ({ onSummaryCreated, onClose }: SummaryFormProps) => {
+  const { getToken } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -24,25 +23,25 @@ const SummaryForm = ({ onClose }: SummaryFormProps) => {
     const formData = new FormData(formElement);
 
     const payload = {
-      description: formData.get("description"),
+      body: formData.get("body"),
     };
 
     try {
       console.log(`Sending payload: ${JSON.stringify(payload)}`);
-      // const token = await getToken();
-      // const res = await fetch(`${import.meta.env.VITE_API_URL}/summaries`, {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //     Authorization: `Bearer ${token}`,
-      //   },
-      //   body: JSON.stringify(payload),
-      // });
-      //
-      // if (res.ok) {
-      //   formElement.reset();
-      //   onSummaryCreated();
-      // }
+      const token = await getToken();
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/summaries`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        formElement.reset();
+        onSummaryCreated();
+      }
     } catch (err) {
       console.error("Submission failed:", err);
     } finally {
@@ -78,14 +77,14 @@ const SummaryForm = ({ onClose }: SummaryFormProps) => {
           </div>
           <div>
             <label
-              htmlFor="description"
+              htmlFor="body"
               className="block text-sm font-medium text-gray-700"
             >
-              Description
+              Summary
             </label>
             <textarea
-              id="description"
-              name="description"
+              id="body"
+              name="body"
               rows={4}
               className="mt-1 block w-full border rounded-md p-2"
             />

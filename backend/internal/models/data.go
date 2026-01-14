@@ -17,7 +17,7 @@ type Project struct {
 }
 
 type Summary struct {
-	// ID     bson.ObjectID `bson:"_id,omitempty" json:"id"`
+	ID     bson.ObjectID `bson:"_id,omitempty" json:"id"`
 	UserID string        `bson:"user_id" json:"user_id"`
 	Body   string        `bson:"body" json:"body"`
 }

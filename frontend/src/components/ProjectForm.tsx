@@ -95,7 +95,7 @@ const ProjectsForm = ({ onProjectCreated, onClose }: ProjectsFormProps) => {
               name="title"
               required
               className="mt-1 block w-full border rounded-md p-2"
-              placeholder="e.g. Devlog"
+              placeholder="e.g. Resume Builder"
             />
           </div>
 
@@ -110,7 +110,7 @@ const ProjectsForm = ({ onProjectCreated, onClose }: ProjectsFormProps) => {
               id="url"
               name="url"
               className="mt-1 block w-full border rounded-md p-2"
-              placeholder="devlog.ntpotraz.dev/"
+              placeholder="https://example.com/"
             />
           </div>
 
@@ -126,7 +126,7 @@ const ProjectsForm = ({ onProjectCreated, onClose }: ProjectsFormProps) => {
               name="date_range"
               required
               className="mt-1 block w-full border rounded-md p-2"
-              placeholder="Oct 2025 - Present"
+              placeholder="Jan 2025 - October 2025"
             />
           </div>
 
@@ -142,6 +142,7 @@ const ProjectsForm = ({ onProjectCreated, onClose }: ProjectsFormProps) => {
               name="description"
               rows={4}
               className="mt-1 block w-full border rounded-md p-2"
+              placeholder={`Thing one\nThing two\nThing three`}
             />
           </div>
 
