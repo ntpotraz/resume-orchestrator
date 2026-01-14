@@ -1,3 +1,5 @@
+export type Page = "Summary" | "WorkExp" | "Projects";
+
 export type Project = {
   id: string;
   user_id: string;
@@ -8,4 +10,10 @@ export type Project = {
   tags: string[];
   is_selected: boolean;
   order: number;
-}
+};
+
+export type Summary = {
+  // id: string;
+  user_id: string;
+  body: string;
+};

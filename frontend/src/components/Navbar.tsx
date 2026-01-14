@@ -1,4 +1,3 @@
-
 type NavbarProps = {
   clickSummary: () => void;
   clickWork: () => void;

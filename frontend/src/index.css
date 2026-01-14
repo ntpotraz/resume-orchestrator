@@ -4,3 +4,26 @@ html {
   height: 100%;
   width: 100%;
 }
+
+@layer utilities {
+  .scrollbar-floating {
+    /* For Webkit (Chrome, Safari, Edge) */
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent; /* Hides the background */
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: #94a3b8; /* Slate-400 */
+      border-radius: 20px;
+      /* Adds spacing around the bar to make it look floating */
+      border: 2px solid transparent; 
+      background-clip: content-box;
+    }
+
+    /* For Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: #94a3b8 transparent;
+  }
+}

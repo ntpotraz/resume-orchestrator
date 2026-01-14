@@ -33,7 +33,7 @@ const WorkTab = () => {
   }, [fetchWorks])
 
   return (
-    <div>
+    <div className="flex flex-col flex-1 min-h-0">
       <WorkList
         works={works}
         openModal={() => setShowModal(true)}
