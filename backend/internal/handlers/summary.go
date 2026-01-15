@@ -88,7 +88,7 @@ func (cfg *Config) DeleteSummary(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	collection := cfg.DB.Collection("summaires")
+	collection := cfg.DB.Collection("summaries")
 	filter := bson.M{
 		"_id":     oid,
 		"user_id": claims.Subject,
