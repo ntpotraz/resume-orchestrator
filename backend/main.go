@@ -94,6 +94,7 @@ func main() {
 
 			r.Get("/summaries", h.GetSummary)
 			r.Post("/summaries", h.AddSummary)
+			r.Delete("/summaries/{id}", h.DeleteSummary)
 		})
 	})
 
