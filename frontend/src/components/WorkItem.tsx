@@ -1,49 +1,51 @@
-// import { useAuth } from "@clerk/clerk-react";
+import { useAuth } from "@clerk/clerk-react";
+import type { Work } from "../types/project";
 
 type WorkItemProps = {
-  work: string;
+  work: Work;
   onWorkDeleted: () => void;
 };
 
-// const WorkItem = ({ work, onWorkDeleted }: WorkItemProps) => {
-const WorkItem = ({ work }: WorkItemProps) => {
-  // const { getToken } = useAuth();
+const WorkItem = ({ work, onWorkDeleted }: WorkItemProps) => {
+  const { getToken } = useAuth();
 
   const deleteWork = async () => {
     if (
-      confirm(`Are you sure you want to delete "${work}"?`) === false
+      confirm(
+        `Are you sure you want to delete "${work.title} - ${work.company}"?`,
+      ) === false
     ) {
       return;
     }
 
-    // try {
-    //   // const token = await getToken();
-    //   const res = await fetch(
-    //     `${import.meta.env.VITE_API_URL}/projects/${work.id}`,
-    //     {
-    //       method: "DELETE",
-    //       headers: {
-    //         Authorization: `Bearer ${token}`,
-    //       },
-    //     },
-    //   );
-    //
-    //   if (res.ok) {
-    //     onWorkDeleted();
-    //   } else {
-    //     const errorText = await res.text();
-    //     console.error("Deletion failed:", errorText);
-    //     alert("Could not delete project");
-    //   }
-    // } catch (err) {
-    //   console.log("Deletion failed...", err);
-    // }
+    try {
+      const token = await getToken();
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/works/${work.id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      if (res.ok) {
+        onWorkDeleted();
+      } else {
+        const errorText = await res.text();
+        console.error("Deletion failed:", errorText);
+        alert("Could not delete work");
+      }
+    } catch (err) {
+      console.log("Deletion failed...", err);
+    }
   };
 
   return (
     <div className="bg-white pb-2 px-4 rounded-2xl w-full md:w-4/5">
-      <div className="flex py-2 justify-between items-center">
-        <h1 className="text-3xl font-bold">{work}</h1>
+      <div className="flex py-2 justify-between items-start">
+        <h1 className="text-3xl font-bold">{work.title}</h1>
         <button
           className="rounded-2xl p-0.5 hover:bg-blue-200 text-red-500 hover:text-red-400 scale-100 hover:scale-110 transform transition-all ease-in-out duration-200"
           type="button"
@@ -65,6 +67,8 @@ const WorkItem = ({ work }: WorkItemProps) => {
           </svg>
         </button>
       </div>
+      <span className="italic">{work.company}</span>
+      {work.tags ? <span>{work.tags.join(", ")}</span> : null}
     </div>
   );
 };

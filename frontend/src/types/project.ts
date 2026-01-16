@@ -7,7 +7,19 @@ export type Project = {
   url?: string;
   date_range: string;
   description: string[];
-  tags: string[];
+  tags?: string[];
+  is_selected: boolean;
+  order: number;
+};
+
+export type Work = {
+  id: string;
+  user_id: string;
+  title: string;
+  company: string;
+  date_range: string;
+  description: string[];
+  tags?: string[];
   is_selected: boolean;
   order: number;
 };

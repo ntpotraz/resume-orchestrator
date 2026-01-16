@@ -1,4 +1,4 @@
-// import { useAuth } from "@clerk/clerk-react";
+import { useAuth } from "@clerk/clerk-react";
 import { useState, useEffect } from "react";
 
 type WorkFormProps = {
@@ -6,9 +6,8 @@ type WorkFormProps = {
   onClose: () => void;
 };
 
-// const WorkForm = ({ onWorkCreated, onClose }: WorkFormProps) => {
-const WorkForm = ({ onClose }: WorkFormProps) => {
-  // const { getToken } = useAuth();
+const WorkForm = ({ onWorkCreated, onClose }: WorkFormProps) => {
+  const { getToken } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -24,25 +23,33 @@ const WorkForm = ({ onClose }: WorkFormProps) => {
     const formData = new FormData(formElement);
 
     const payload = {
-      description: formData.get("description"),
+      title: formData.get("title"),
+      company: formData.get("company"),
+      date_range: formData.get("date_range"),
+      description: (formData.get("description") as string)
+        .split("\n")
+        .filter((line) => line.trim() !== ""),
+      tags: (formData.get("tags") as string)
+        .split(",")
+        .map((tag) => tag.trim()),
     };
 
     try {
       console.log(`Sending payload: ${JSON.stringify(payload)}`);
-      // const token = await getToken();
-      // const res = await fetch(`${import.meta.env.VITE_API_URL}/works`, {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //     Authorization: `Bearer ${token}`,
-      //   },
-      //   body: JSON.stringify(payload),
-      // });
-      //
-      // if (res.ok) {
-      //   formElement.reset();
-      //   onWorkCreated();
-      // }
+      const token = await getToken();
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/works`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (res.ok) {
+        formElement.reset();
+        onWorkCreated();
+      }
     } catch (err) {
       console.error("Submission failed:", err);
     } finally {
@@ -78,16 +85,79 @@ const WorkForm = ({ onClose }: WorkFormProps) => {
           </div>
           <div>
             <label
+              htmlFor="title"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Job Title
+            </label>
+            <input
+              id="title"
+              name="title"
+              required
+              className="mt-1 block w-full border rounded-md p-2"
+              placeholder="e.g. Resume Builder"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="company"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Company
+            </label>
+            <input
+              id="company"
+              name="company"
+              className="mt-1 block w-full border rounded-md p-2"
+              placeholder="Example Org"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="date_range"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Date Range
+            </label>
+            <input
+              id="date_range"
+              name="date_range"
+              required
+              className="mt-1 block w-full border rounded-md p-2"
+              placeholder="Jan 2025 - October 2025"
+            />
+          </div>
+
+          <div>
+            <label
               htmlFor="description"
               className="block text-sm font-medium text-gray-700"
             >
-              Description
+              Description (One bullet per line)
             </label>
             <textarea
               id="description"
               name="description"
               rows={4}
               className="mt-1 block w-full border rounded-md p-2"
+              placeholder={`Thing one\nThing two\nThing three`}
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="tags"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Tags (Comma separated)
+            </label>
+            <input
+              id="tags"
+              name="tags"
+              className="mt-1 block w-full border rounded-md p-2"
+              placeholder="React, TypeScript, Go..."
             />
           </div>
 
@@ -96,7 +166,7 @@ const WorkForm = ({ onClose }: WorkFormProps) => {
             disabled={isSubmitting}
             className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800 disabled:bg-gray-400"
           >
-            {isSubmitting ? "Saving..." : "Save Work Experience"}
+            {isSubmitting ? "Saving..." : "Save Project"}
           </button>
         </form>
       </div>

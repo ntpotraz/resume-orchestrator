@@ -11,7 +11,19 @@ type Project struct {
 	URL         string        `bson:"url,omitempty" json:"url,omitempty"`
 	DateRange   string        `bson:"date_range" json:"date_range"`
 	Description []string      `bson:"description" json:"description"`
-	Tags        []string      `bson:"tags" json:"tags"`
+	Tags        []string      `bson:"tags,omitemtpy" json:"tags,omitemtpy"`
+	IsSelected  bool          `bson:"is_selected" json:"is_selected"`
+	Order       int           `bson:"order" json:"order"`
+}
+
+type Work struct {
+	ID          bson.ObjectID `bson:"_id,omitempty" json:"id"`
+	UserID      string        `bson:"user_id" json:"user_id"`
+	Title       string        `bson:"title" json:"title"`
+	Company     string        `bson:"company" json:"company"`
+	DateRange   string        `bson:"date_range" json:"date_range"`
+	Description []string      `bson:"description" json:"description"`
+	Tags        []string      `bson:"tags,omitempty" json:"tags,omitempty"`
 	IsSelected  bool          `bson:"is_selected" json:"is_selected"`
 	Order       int           `bson:"order" json:"order"`
 }

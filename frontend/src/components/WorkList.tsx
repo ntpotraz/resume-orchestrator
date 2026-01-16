@@ -1,7 +1,8 @@
+import type { Work } from "../types/project";
 import WorkItem from "./WorkItem";
 
 type WorkListProps = {
-  works: string[];
+  works: Work[];
   fetchWorks: () => void;
   openModal: () => void;
 };
@@ -34,7 +35,7 @@ const WorkList = ({ fetchWorks, openModal, works }: WorkListProps) => {
         {works
           ? works.map((work) => (
               <WorkItem
-                key={crypto.randomUUID.toString()}
+                key={work.id}
                 work={work}
                 onWorkDeleted={fetchWorks}
               />

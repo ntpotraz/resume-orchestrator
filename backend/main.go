@@ -92,9 +92,13 @@ func main() {
 			r.Post("/projects", h.AddProject)
 			r.Delete("/projects/{id}", h.DeleteProject)
 
-			r.Get("/summaries", h.GetSummary)
+			r.Get("/summaries", h.ListSummaries)
 			r.Post("/summaries", h.AddSummary)
 			r.Delete("/summaries/{id}", h.DeleteSummary)
+
+			r.Get("/works", h.ListWork)
+			r.Post("/works", h.AddWork)
+			r.Delete("/works/{id}", h.DeleteWork)
 		})
 	})
 

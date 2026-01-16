@@ -10,7 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
-func (cfg *Config) GetSummary(w http.ResponseWriter, r *http.Request) {
+func (cfg *Config) ListSummaries(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	claims, ok := clerk.SessionClaimsFromContext(ctx)
 	if !ok {
