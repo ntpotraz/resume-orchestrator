@@ -1,4 +1,4 @@
-export type Page = "Summary" | "WorkExp" | "Projects";
+export type Page = "Summary" | "WorkExp" | "Projects" | "Preview";
 
 export type Project = {
   id: string;
@@ -29,3 +29,12 @@ export type Summary = {
   user_id: string;
   body: string;
 };
+
+export type Builder = {
+  role: string;
+  summary: Summary;
+  works?: Work[];
+  projects?: Project[];
+  langs: string[];
+  tools: string[];
+}

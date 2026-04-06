@@ -42,7 +42,7 @@ const SummaryItem = ({ summary, onSummaryDeleted }: SummaryItemProps) => {
 
   return (
     <div className="bg-white pb-2 px-4 rounded-2xl w-full md:w-4/5">
-      <div className="flex py-2 justify-between items-center">
+      <div className="flex py-2 justify-between items-start">
         <h1 className="text-3xl font-bold">{summary.id}</h1>
         <button
           className="rounded-2xl p-0.5 hover:bg-blue-200 text-red-500 hover:text-red-400 scale-100 hover:scale-110 transform transition-all ease-in-out duration-200"
